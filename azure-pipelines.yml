@@ -1,0 +1,34 @@
+trigger: 
+- main
+
+pool: Avengers
+
+stages:
+  - stage: terraforminit
+    jobs:
+      - job:
+        displayName: 'job1'
+        steps: 
+          - task: TerraformTaskV4@4
+            inputs:
+              provider: 'azurerm'
+              command: 'init'
+              workingDirectory: 'Env/Dev'
+              backendServiceArm: 'appcredsdec'
+              backendAzureRmResourceGroupName: 'rg-santu'
+              backendAzureRmStorageAccountName: 'santustorage'
+              backendAzureRmContainerName: 'sandeeptfstate'
+              backendAzureRmKey: 'terraform.tfstate'
+
+          - task: TerraformTaskV4@4
+            inputs:
+              provider: 'azurerm'
+              command: 'validate'
+              workingDirectory: 'Env/Dev'
+          - task: TerraformTaskV4@4
+            inputs:
+              provider: 'azurerm'
+              command: 'apply'
+              workingDirectory: 'Env/Dev'
+              commandOptions: '--auto-approve'
+              environmentServiceNameAzureRM: 'appcredsdec'
